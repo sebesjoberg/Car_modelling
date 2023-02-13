@@ -1,45 +1,45 @@
 from random import random as rand
 class carpool():
-    def __init__(self,cars=999999):
+    def __init__(self,cars=12):
         self.cars = cars
-        self.cars_in_use = []
-        self.night = [22,23,0,1,2,3,4,5]
-        self.day = [6,7,8,9,10,11,12,13,14,15,16,17]
-        self.evening = [18,19,20,21]
+        self.cars_in_use = 0
+        
 
-    def step(self,h,persons):
+    def step(self,time,persons):
         #remove one hour from each car
-        self.unoccopy()
-        #first look at hour by using modulo
-        hour = h%24
-        if hour in self.night:
-            for p in persons:#now add conditions for job types esp in day
-                if rand() < p.night[0] and not p.usingcar:
-                    self.occupy(p,p.night[1])
-        if hour in self.day:
+        self.cars = self.cars + self.cars_in_use
+        self.cars_in_use = 0
+        crashes = 0
+        if time == "night":
             for p in persons:
-                if rand() < p.day[0] and not p.usingcar:
-                    self.occupy(p,p.day[1])
-        if hour in self.evening:
+                if (100*rand()) < p.night:
+                    if self.cars > 0:
+                        self.cars_in_use = self.cars_in_use+1
+                        self.cars = self.cars - 1
+                    else:
+                        crashes += 1
+                    #take away car and chekc if car is left
+        if time == "day":
             for p in persons:
-                if rand() < p.evening[0] and not p.usingcar:
-                    self.occupy(p,p.evening[1])
-        return len(self.cars_in_use)
+                if (100*rand()) < p.day:
+                    if self.cars > 0:
+                        self.cars_in_use = self.cars_in_use+1
+                        self.cars = self.cars - 1
+                    else:
+                        crashes += 1
+                    
+        if time == "evening":
+            for p in persons:
+                if (100*rand()) < p.evening:
+                    if self.cars > 0:
+                        self.cars_in_use = self.cars_in_use+1
+                        self.cars = self.cars - 1
+                    else:
+                        crashes += 1
+        return self.cars_in_use,crashes
     
-    def occupy(self,p,hours):
-        self.cars_in_use.append([hours,p])
-        p.usingcar = True
-    def unoccopy(self):
-        new_cars = []
-        for index in range(len(self.cars_in_use)):
-           
-            car,person = self.cars_in_use[index]
-            car = car - 1
-            if car > 0:
-                new_cars.append([car,person])
-            else:
-                person.usingcar = False
-        self.cars_in_use = new_cars
+   
+    
 
 
         
